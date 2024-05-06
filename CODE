@@ -1,0 +1,96 @@
+/*donor table*/
+CREATE TABLE Donor ( 
+ Donor_ID INT PRIMARY KEY, 
+ Name VARCHAR(100), 
+ Blood_Group VARCHAR(3), 
+ Contact_Number VARCHAR(15), 
+ Address VARCHAR(255), 
+ Age INT, 
+ Gender VARCHAR(10), 
+ Last_Donation_Date DATE, 
+ Medical_History TEXT 
+);
+insert into Donor(Donor_ID,Name,Blood_Group,Contact_Number,Address,Age,Gender,Last_Donation_Date,Medical_History)
+values(1,'Roy','AB-','878739485','street 12 ed st',26,'Male','05-08-23','N.A'),
+(2,'Jack','B+','878733467','street 11 de st',25,'Male','05-09-23','High BP'),
+(3,'Oli','A+','878734325','street 11 oat st',24,'Female','15-10-23','N.A'),
+(4,'Oggy','O+','878733244','street 12 Vizag',22,'Male','05-10-23','N.A');
+
+/*recipient table*/
+CREATE TABLE Recipient ( 
+ Recipient_ID INT PRIMARY KEY, 
+ Name VARCHAR(100), 
+ Blood_Group VARCHAR(3), 
+ Contact_Number VARCHAR(15), 
+ Address VARCHAR(255), 
+ Age INT, 
+ Gender VARCHAR(10), 
+ Required_Blood_Units INT, 
+ Hospital_Details VARCHAR(255) 
+);
+insert into Recipient(Recipient_ID,Name,Blood_Group,Contact_Number,Address,Age,Gender,Required_Blood_Units,Hospital_Details)
+values(101,'Roy','AB-','878739485','street 12 ed st',26,'Male',1,'G Hospitals'),
+(201,'Jack','B+','878733467','street 11 de st',25,'Male',1,'City Hospitals'),
+(301,'Oli','A+','878734325','street 11 oat st',24,'Female',1,'S Hospitals'),
+(401,'Oggy','O+','878733244','street 12 Vizag',22,'Male',1,'Swaraj Hospitals');
+
+/*blood bank table*/
+CREATE TABLE Blood_Bank(
+Bank_id INT PRIMARY KEY,
+Name VARCHAR(100),
+LOCATION VARCHAR(100),
+CONTACT_NUMBER VARCHAR(50)
+);
+insert into Blood_Bank(Bank_id,Name,LOCATION,CONTACT_NUMBER)
+values(1,'CT Blood Bank','123 oak street','87432424'),
+       (2,'City Blood Bank','12 edn street','87433424'),
+       (3,'RT Blood Bank','11 dt street','85432424');
+
+/*blood donation table*/
+CREATE TABLE Blood_Donation(
+Donation_ID varchar(50) PRIMARY KEY,
+Donor_ID INT,
+Recipient_ID INT,
+Donation_Date DATE,
+Blood_Group VARCHAR(3),
+Quantity_Donated varchar(50),
+  Total_Donation int,
+FOREIGN KEY(Donor_ID) REFERENCES Donor(Donor_ID),
+FOREIGN KEY (Recipient_ID) REFERENCES Recipient(Recipient_ID)
+);
+insert into Blood_Donation(Donation_ID,Donor_ID,Recipient_ID,Donation_Date,Blood_Group,Quantity_Donated,Total_Donation)
+values('A101',1,101,'05-08-23','AB-','250ml',1),
+('B201',2,201,'05-09-23','B+','220ml',1),
+('C301',3,301,'15-10-23','A+','200ml',1),
+('D401',4,401,'05-10-23','O+','220ml',1);
+
+/*views table*/
+CREATE VIEW Donor_Last_Donation AS 
+SELECT d.Donor_ID, d.Name, d.Last_Donation_Date 
+FROM Donor d; 
+View to Retrieve Recipients and Their Required Blood Units: 
+CREATE VIEW Recipient_Requirements AS 
+SELECT r.Recipient_ID, r.Name, r.Required_Blood_Units 
+FROM Recipient r; 
+
+View to Retrieve Donors with No Medical History: 
+12 
+CREATE VIEW Donors_No_Medical_History AS 
+SELECT d.Donor_ID, d.Name, d.Blood_Group, d.Age, d.Gender 
+FROM Donor d 
+WHERE d.Medical_History IS NULL; 
+View to Retrieve Blood Donations with Donor and Recipient Details: 
+CREATE VIEW Blood_Donation_Details AS 
+SELECT bd.Donation_ID, d.Name AS Donor_Name, r.Name AS 
+Recipient_Name, bd.Donation_Date, bd.Blood_Group, 
+bd.Quantity_Donated 
+FROM Blood_Donation bd 
+JOIN Donor d ON bd.Donor_ID = d.Donor_ID 
+JOIN Recipient r ON bd.Recipient_ID = r.Recipient_ID; 
+View to Retrieve Blood Donations Made by Donors Under 30: 
+CREATE VIEW Blood_Donations_Under_30 AS 
+SELECT bd.Donation_ID, d.Name AS Donor_Name, 
+bd.Donation_Date, bd.Blood_Group, bd.Quantity_Donated 
+FROM Blood_Donation bd 
+JOIN Donor d ON bd.Donor_ID = d.Donor_ID 
+WHERE d.Age < 28;
